@@ -1,4 +1,4 @@
-package com.example.to_do_liste;
+package com.example.to_do_liste.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
