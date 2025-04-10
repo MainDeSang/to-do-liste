@@ -3,14 +3,12 @@ package com.example.to_do_liste.mapper;
 import com.example.to_do_liste.dto.ProjectDTO;
 import com.example.to_do_liste.entity.Project;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 //Mappt zwei Objekte mithilfe von MAPSTRUCT Plugin
-@Mapper
+//✅ Wichtig: componentModel = "spring" sorgt dafür, dass Spring das Interface als Bean erkennt → du kannst es in der Service-Schicht per Autowiring verwenden.
+@Mapper(componentModel = "spring")
 public interface ProjectMapper {
-    ProjectMapper INSTANCE = Mappers.getMapper( ProjectMapper.class);
-
-    @Mapping(source = "numberOfSeats", target = "seatCount")
-    ProjectDTO projectToProjectDTO(Project project);
+    ProjectDTO toDTO(Project project);
+    Project toProject(ProjectDTO projectDTO);
 }
+
