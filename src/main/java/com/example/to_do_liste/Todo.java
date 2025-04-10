@@ -36,4 +36,5 @@ public class Todo {
 
     @ManyToMany(mappedBy = "todos")
     private Set<StudyPlan> studyPlans = new HashSet<>();
+
 }
