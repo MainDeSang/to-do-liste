@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.util.HashSet;
 @Entity
 @Data                       //erzeugt Getter, Setter, equals, hashCode, toString
 @AllArgsConstructor
+@NoArgsConstructor // NoArgsConstructor muss hinzugefügt werde, da dieser in TodoMapper.java verwendet wird!
 public class Todo {
 
     @Id
