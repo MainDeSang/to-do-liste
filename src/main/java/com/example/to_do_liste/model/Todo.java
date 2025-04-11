@@ -1,16 +1,14 @@
-package com.example.to_do_liste;
+package com.example.to_do_liste.model;
 
-import com.fasterxml.jackson.databind.DatabindException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data   //erzeugt Getter, Setter, equals, hashCode, toString
@@ -32,13 +30,13 @@ public class Todo {
 
     private LocalDateTime endDate;
 
-    private String status;      // "Done", "in progress", ...
+    private String status;                  // "Done", "in progress", ...
 
-    @ManyToOne
+    @ManyToOne                              // Wenn ein To-do nur zu einem Project gehört, aber ein Project mehrere To-dos enthalten kann
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @ManyToMany(mappedBy = "todos")
+    @ManyToMany(mappedBy = "todos")         // Wenn ein To-do zu mehreren StudyPlans gehört und ein StudyPlan mehrere To-dos enthalten kann
     private Set<StudyPlan> studyPlans = new HashSet<>();
 
 }
