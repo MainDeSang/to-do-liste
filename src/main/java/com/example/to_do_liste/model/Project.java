@@ -25,6 +25,11 @@ public class Project {
     @Column(length = 2000)
     private String description;
 
+    // Ein Projekt gehört zu einer Person ("owner")
+     @ManyToOne
+     @JoinColumn(name = "person_id")
+     private Person owner;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Todo> todos = new HashSet<>();
 }
