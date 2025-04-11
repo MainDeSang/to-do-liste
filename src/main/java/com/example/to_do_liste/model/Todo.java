@@ -39,4 +39,8 @@ public class Todo {
     @ManyToMany(mappedBy = "todos")         // Wenn ein To-do zu mehreren StudyPlans gehört und ein StudyPlan mehrere To-dos enthalten kann
     private Set<StudyPlan> studyPlans = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "person_id")
+    private Person owner;
+
 }

@@ -23,11 +23,15 @@ public class StudyPlan {
     private String name;
 
     @ManyToMany
-//    @JoinTable(
-//            name = "studyplan_todo",
-//            joinColumns = @JoinColumn(name = "studyplan_id"),
-//            inverseJoinColumns = @JoinColumn(name = "todo_id")
-//    )
+    @JoinTable(
+            name = "studyplan_todo",
+            joinColumns = @JoinColumn(name = "studyplan_id"),
+            inverseJoinColumns = @JoinColumn(name = "todo_id")
+    )
     private Set<Todo> todos = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "person_id")
+    private Person owner;
 
 }
