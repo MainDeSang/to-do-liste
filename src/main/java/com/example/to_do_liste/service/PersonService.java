@@ -7,6 +7,8 @@ import com.example.to_do_liste.repository.PersonRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PersonService {
 
@@ -26,5 +28,15 @@ public class PersonService {
         // 2. Person in der DB speichern
         personRepository.save(person);
     }
+    public boolean authenticate(String username, String rawPassword) {
+        Optional<Person> personOptional = personRepository.findByUsername(username);
+
+        if (personOptional.isPresent()) {
+            Person person = personOptional.get();
+            return passwordEncoder.matches(rawPassword, person.getPassword());
+        }
+        return false;
+    }
+
 }
 
