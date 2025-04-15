@@ -46,21 +46,6 @@ public class TodoController {
                 .toList();
     }
 
-
-    private TodoDto convertToDto(Todo todo) {
-        TodoDto todoDto = new TodoDto();
-        todoDto.id = todo.getId();
-        todoDto.title = todo.getTitle();
-        todoDto.description = todo.getDescription();
-        todoDto.startDate = todo.getStartDate();
-        todoDto.endDate = todo.getEndDate();
-        todoDto.status = todo.getStatus().name();               // .name() ist eine Methode der enum-Klasse und gibt den genauen Namen des Enum-Werts als String zurück
-        todoDto.ownerId = todo.getOwner().getId();
-        todoDto.projectId = todo.getProject() != null ?
-                todo.getProject().getId() : null;
-        return todoDto;
-    }
-
     @PostMapping
     public TodoDto createTodo(@RequestBody TodoDto todoDto) {                   // @RequestBody sorgt dafür, dass der empfangene Text aus der Anfrage automatisch in ein Java-Objekt umgewandelt wird
         return convertToDto(todoService.createTodo(todoDto));
@@ -77,5 +62,19 @@ public class TodoController {
     @PutMapping("/{id}/restore")
     public TodoDto restoreTodo(@PathVariable Long id) {
         return convertToDto(todoService.restoreTodo(id));
+    }
+
+    private TodoDto convertToDto(Todo todo) {
+        TodoDto todoDto = new TodoDto();
+        todoDto.id = todo.getId();
+        todoDto.title = todo.getTitle();
+        todoDto.description = todo.getDescription();
+        todoDto.startDate = todo.getStartDate();
+        todoDto.endDate = todo.getEndDate();
+        todoDto.status = todo.getStatus().name();               // .name() ist eine Methode der enum-Klasse und gibt den genauen Namen des Enum-Werts als String zurück
+        todoDto.ownerId = todo.getOwner().getId();
+        todoDto.projectId = todo.getProject() != null ?
+                todo.getProject().getId() : null;
+        return todoDto;
     }
 }
