@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data   //erzeugt Getter, Setter, equals, hashCode, toString
+@Data   // Lombok: erzeugt Getter, Setter, equals, hashCode, toString
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
@@ -30,7 +30,11 @@ public class Todo {
 
     private LocalDateTime endDate;
 
-    private String status;                  // "Done", "in progress", ...
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;        // Zeitpunkt an dem To-do gelöscht wurde, "null" bedeutet nicht gelöscht
 
     @ManyToOne                              // Wenn ein To-do nur zu einem Project gehört, aber ein Project mehrere To-dos enthalten kann
     @JoinColumn(name = "project_id")
@@ -42,5 +46,12 @@ public class Todo {
     @ManyToOne
     @JoinColumn(name = "person_id")
     private Person owner;
+
+                                            // enum ist ein Datentyp der besagt, dass die Variable nur einen Wert auf dieser festen Liste annehmen darf.
+    public enum Status {                    //Speichert den Enum-Wert als Klartext in der DB -> keine Tippfehler, bessere Auswertung und valide Werte
+        TODO,
+        DOING,
+        DONE
+    }
 
 }
