@@ -24,6 +24,7 @@ public class Person {
 
     private String password;
 
+    @Column(unique = true)
     private String email;
 
     // User ist der Besitzer von/hat To-dos und StudyPlans

@@ -3,7 +3,7 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
-import Login from "./pages/Login"; // bald erstellen
+import Login from "./pages/Login";
 
 function App() {
     return (
