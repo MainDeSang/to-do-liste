@@ -33,6 +33,9 @@ public class Todo {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;        // Zeitpunkt an dem To-do gelöscht wurde, "null" bedeutet nicht gelöscht
+
     @ManyToOne                              // Wenn ein To-do nur zu einem Project gehört, aber ein Project mehrere To-dos enthalten kann
     @JoinColumn(name = "project_id")
     private Project project;
