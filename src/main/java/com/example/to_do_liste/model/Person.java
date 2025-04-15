@@ -34,4 +34,7 @@ public class Person {
     // Beziehung zwischen StudyPlans und Person (eine Person kann mehrere StudyPlans haben)
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<StudyPlan> studyPlans = new HashSet<>();
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Project> projects = new HashSet<>();
 }
