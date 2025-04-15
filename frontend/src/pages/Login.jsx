@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Katzenbild from "../components/Katzenbild";
 
 function Login() {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loggedIn, setLoggedIn] = useState(false);
 
@@ -10,7 +10,7 @@ function Login() {
         event.preventDefault();
 
         const loginData = {
-            username,
+            email,
             password,
         };
 
@@ -43,11 +43,11 @@ function Login() {
             <h2>Login</h2>
             <form onSubmit={handleSubmit}>
                 <label>
-                    Benutzername:
+                    email:
                     <input
                         type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
                 </label>
                 <br />
