@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 // Zur Info:
 // Diese Klasse habe ich vorübergehend erstellt, sie testet ob Daten in der Datenbank gespeichert werden
@@ -28,7 +29,7 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (personRepository.findByUsername("testuser") == null) {
+        if (personRepository.findByUsername("testuser").isEmpty()) {
             Person p = new Person();
             p.setUsername("testuser");
             p.setPassword("testpasswort123");
@@ -38,7 +39,7 @@ public class DataSeeder implements CommandLineRunner {
         } else {
             System.out.println("***** Test-Person existiert bereits. *****");
         }
-        Person person = personRepository.findByUsername("testuser");
+        Optional<Person> person = personRepository.findByUsername("testuser");
         if (todoRepository.count() == 0) {
             Todo todo1 = Todo.builder()
                     .title("Erstes Todo")
@@ -46,7 +47,7 @@ public class DataSeeder implements CommandLineRunner {
                     .startDate(LocalDateTime.now())
                     .endDate(LocalDateTime.now().plusDays(2))
                     .status(Status.TODO)
-                    .owner(person)
+                    .owner(person.orElseThrow(() -> new RuntimeException("person nicht gefunden")))
                     .build();
 
             Todo todo2 = Todo.builder()
@@ -55,7 +56,7 @@ public class DataSeeder implements CommandLineRunner {
                     .startDate(LocalDateTime.now())
                     .endDate(LocalDateTime.now().plusDays(3))
                     .status(Status.DOING)
-                    .owner(person)
+                    .owner(person.orElseThrow(() -> new RuntimeException("person nicht gefunden")))
                     .build();
 
             todoRepository.save(todo1);
