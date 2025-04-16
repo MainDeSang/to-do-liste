@@ -1,24 +1,13 @@
 package com.example.to_do_liste.dto;
 
+import lombok.Getter;
+
+@Getter
 public class LoginRequest {
-    private String username;
+    // Getter und Setter
+    private String email;
     private String password;
 
-    // Getter und Setter
-    public String getUsername() {
-        return username;
-    }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
 
