@@ -48,19 +48,26 @@ public class TodoController {
 
     @PostMapping
     public TodoDto createTodo(@RequestBody TodoDto todoDto) {                   // @RequestBody sorgt dafür, dass der empfangene Text aus der Anfrage automatisch in ein Java-Objekt umgewandelt wird
+
         return convertToDto(todoService.createTodo(todoDto));
     }
 
-
+    @PutMapping("/{id}")
+    public TodoDto updateTodo(@PathVariable Long id,
+                              @RequestBody TodoDto todoDto) {
+        return convertToDto(todoService.updateTodo(id, todoDto));
+    }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void softDeleteTodo(@PathVariable Long id) {
+
         todoService.softDeleteTodo(id);
     }
 
     @PutMapping("/{id}/restore")
     public TodoDto restoreTodo(@PathVariable Long id) {
+
         return convertToDto(todoService.restoreTodo(id));
     }
 

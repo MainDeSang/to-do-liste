@@ -63,7 +63,7 @@ public class TodoService {
         return todoRepository.save(todo);
     }
 
-    public Todo updateTodo(TodoDto todoDto, Long id) {
+    public Todo updateTodo(Long id, TodoDto todoDto) {
         // To-do aus der Datenbank abrufen
         Todo todo = todoRepository.findById(id)
                 .orElseThrow(
