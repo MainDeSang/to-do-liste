@@ -72,7 +72,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    void returnOnlyDeletedTodos_noError() {
+    void testReturnOnlyDeletedTodos_noError() {
         // drei To-dos erstellen, eines davon ist gelöscht
         Todo todo1 = new Todo();
         todo1.setTitle("Erstes aktives Todo");
@@ -101,7 +101,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    void createNewTodo_noError() {
+    void testCreateNewTodo_noError() {
         // To-do erstellen:
         TodoDto todoDto = new TodoDto();
         todoDto.title = "Test-Todo";
@@ -135,7 +135,7 @@ public class TodoServiceTest {
 
         // Die Felder des erstellten To-dos sollten korrekt gesetzt sein
         assertEquals("Test-Todo", result.getTitle());
-        assertEquals("Beschreibung", result.getDescription());
+        assertEquals("Test-Beschreibung", result.getDescription());
         assertEquals(Todo.Status.TODO, result.getStatus());
         assertEquals(mockedPerson, result.getOwner());
         assertEquals(mockedProject, result.getProject());
@@ -147,7 +147,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenPersonNotFound() {
+    void testCreateThrowExceptionWhenPersonNotFound() {
         // dto erstellen
         TodoDto todoDto = new TodoDto();
         todoDto.title = "Fehlerfall-Todo";
@@ -168,7 +168,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenProjectNotFound() {
+    void testCreateThrowExceptionWhenProjectNotFound() {
         // Eingabe-Daten
         TodoDto todoDto = new TodoDto();
         todoDto.title = "Mit ungültigem Projekt";
@@ -193,6 +193,194 @@ public class TodoServiceTest {
         // Prüfung des Fehlertexts
         assertEquals("Projekt nicht gefunden", exception.getMessage());
     }
+
+    @Test
+    void testUpdateTodoSuccessfully() {
+        // Eingabe-Daten (DTO mit neuen Werten)
+        TodoDto todoDto = new TodoDto();
+        todoDto.title = "Aktualisierter Titel";
+        todoDto.description = "Neue Beschreibung";
+        todoDto.status = "DOING";
+        todoDto.startDate = LocalDateTime.now();
+        todoDto.endDate = LocalDateTime.now().plusDays(2);
+        todoDto.ownerId = 1L;
+        todoDto.projectId = 2L;
+
+        // Bestehendes To-do vorbereiten
+        Todo existingTodo = new Todo();
+        existingTodo.setId(10L); // beliebige ID
+        existingTodo.setTitle("Alter Titel");
+
+        // Mock-Person
+        Person mockedPerson = new Person();
+        mockedPerson.setId(1L);
+
+        // Mock-Projekt
+        Project mockedProject = new Project();
+        mockedProject.setId(2L);
+
+        // Mocks vorbereiten
+        Mockito.when(todoRepository.findById(10L)).thenReturn(Optional.of(existingTodo));
+        Mockito.when(personRepository.findById(1L)).thenReturn(Optional.of(mockedPerson));
+        Mockito.when(projectRepository.findById(2L)).thenReturn(Optional.of(mockedProject));
+        Mockito.when(todoRepository.save(Mockito.any(Todo.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // Methode ausführen
+        Todo updated = todoService.updateTodo(10L, todoDto);
+
+        // Überprüfung
+        assertEquals("Aktualisierter Titel", updated.getTitle());
+        assertEquals("Neue Beschreibung", updated.getDescription());
+        assertEquals(Todo.Status.DOING, updated.getStatus());
+        assertEquals(todoDto.startDate, updated.getStartDate());
+        assertEquals(todoDto.endDate, updated.getEndDate());
+        assertEquals(mockedPerson, updated.getOwner());
+        assertEquals(mockedProject, updated.getProject());
+
+        // Wurde gespeichert?
+        Mockito.verify(todoRepository).save(Mockito.any(Todo.class));
+    }
+
+    @Test
+    void testUpdateThrowExceptionWhenTodoNotFound() {
+        // neue Daten im dto
+        TodoDto todoDto = new TodoDto();
+        todoDto.title = "xyz";
+        todoDto.ownerId = 1L;
+
+        // Das To-do mit ID 42 existiert nicht
+        Mockito.when(todoRepository.findById(42L)).thenReturn(Optional.empty());
+
+        // Erwartet wird RuntimeException
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            todoService.updateTodo(42L, todoDto);
+        });
+
+        // Optional: Nachricht der Exception prüfen
+        assertEquals("Kein Todo gefunden", exception.getMessage());
+    }
+
+    @Test
+    void testUpdateThrowExceptionWhenPersonNotFound() {
+        // bestehendes To-do soll aktualisiert werden
+        Todo existingTodo = new Todo();
+        existingTodo.setId(1L);
+
+        // DTO mit gültigem To-do, aber ungültiger ownerId
+        TodoDto todoDto = new TodoDto();
+        todoDto.ownerId = 99L;                  // Diese Person gibt es nicht
+
+        // To-do wird gefunden
+        Mockito.when(todoRepository.findById(1L)).thenReturn(Optional.of(existingTodo));
+
+        // Person mit ID 99L wird nicht gefunden
+        Mockito.when(personRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Erwartet wird eine RuntimeException
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            todoService.updateTodo(1L, todoDto);
+        });
+
+        // Text der Exception prüfen
+        assertEquals("Person nicht gefunden", exception.getMessage());
+    }
+
+    @Test
+    void testUpdateThrowExceptionWhenProjectNotFound() {
+        // Vorhandenes To-do
+        Todo existingTodo = new Todo();
+        existingTodo.setId(1L);
+
+        // DTO mit gültiger ownerId und ungültiger projectId
+        TodoDto todoDto = new TodoDto();
+        todoDto.ownerId = 1L;
+        todoDto.projectId = 999L; // Projekt existiert nicht
+
+        // Person ist vorhanden
+        Person owner = new Person();
+        owner.setId(1L);
+
+        // Repository-Reaktionen
+        Mockito.when(todoRepository.findById(1L)).thenReturn(Optional.of(existingTodo));
+        Mockito.when(personRepository.findById(1L)).thenReturn(Optional.of(owner));
+        Mockito.when(projectRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Aufruf der Methode, Überprüfung auf Exception
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            todoService.updateTodo(1L, todoDto);
+        });
+
+        // Text der Exception prüfen
+        assertEquals("Projekt nicht gefunden", exception.getMessage());
+    }
+
+    @Test
+    void testSoftDeleteTodoSuccessfully() {
+        // vorhandenes To-do
+        Todo existingTodo = new Todo();
+        existingTodo.setId(1L);
+
+        // Repository soll To-do zurückgeben
+        Mockito.when(todoRepository.findById(1L)).thenReturn(Optional.of(existingTodo));
+
+        // Methode aufrufen
+        todoService.softDeleteTodo(1L);
+
+        // Hat To-do gesetztes deletedAt?
+        assertNotNull(existingTodo.getDeletedAt());
+
+        // Wird save() aufgerufen?
+        Mockito.verify(todoRepository).save(existingTodo);
+    }
+
+    @Test
+    void testThrowExceptionWhenSoftTodoToDeleteNotFound() {
+        // Repository gibt kein Ergebnis zurück
+        Mockito.when(todoRepository.findById(42L)).thenReturn(Optional.empty());
+
+        // Methode aufrufen; prüfen ob Exception geworfen wird
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            todoService.softDeleteTodo(42L);
+        });
+
+        // Text prüfen
+        assertEquals("To-do nicht gefunden", exception.getMessage());
+    }
+
+    @Test
+    void testRestoreTodoSuccessfully() {
+        // Simuliert gelöschtes To-do
+        Todo deletedTodo = new Todo();
+        deletedTodo.setId(1L);
+        deletedTodo.setDeletedAt(LocalDateTime.now()); // war gelöscht
+
+        // Repository gibt To-do zurück
+        Mockito.when(todoRepository.findById(1L)).thenReturn(Optional.of(deletedTodo));
+        Mockito.when(todoRepository.save(Mockito.any(Todo.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // Methode aufrufen
+        Todo result = todoService.restoreTodo(1L);
+
+        // Überprüfung
+        assertNotNull(result);
+        assertNull(result.getDeletedAt()); // sollte wieder aktiv sein
+
+        Mockito.verify(todoRepository).save(deletedTodo);
+    }
+
+    @Test
+    void testThrowExceptionWhenTodoToRestoreNotFound() {
+        // Repository gibt kein Ergebnis zurück
+        Mockito.when(todoRepository.findById(42L)).thenReturn(Optional.empty());
+
+        // Aufruf und Prüfung
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            todoService.restoreTodo(42L);
+        });
+
+        assertEquals("To-do nicht gefunden", exception.getMessage());
+    }
+
 
 
 }
