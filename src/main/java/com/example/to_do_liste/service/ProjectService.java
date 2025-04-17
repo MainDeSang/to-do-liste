@@ -1,10 +1,18 @@
 package com.example.to_do_liste.service;
 
+import com.example.to_do_liste.dto.ProjectDto;
 import com.example.to_do_liste.model.Person;
 import com.example.to_do_liste.model.Project;
+import com.example.to_do_liste.model.Todo;
+import com.example.to_do_liste.repository.PersonRepository;
 import com.example.to_do_liste.repository.ProjectRepository;
+import com.example.to_do_liste.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 
 @Service
@@ -12,16 +20,31 @@ import org.springframework.stereotype.Service;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final PersonRepository personRepository;
+    private final TodoRepository todoRepository;
 
-    public Project createProject(Project project) {
-        if (project.getTitle() == null || project.getTitle().isEmpty()) {
+    public Project createProject(ProjectDto dto) {
+        if (dto.getTitle() == null || dto.getTitle().isEmpty()) {
             throw new IllegalArgumentException("Project title cannot be empty");
         }
 
-        // Optional: Platzhalter für Owner – hier wäre evtl. ein echter User sinnvoll
-        if (project.getOwner() == null) {
-            project.setOwner(Person.builder().username("Unbekannt").build());
+        // Echten Owner laden
+        Person owner = personRepository.findById(dto.getOwnerId())
+                .orElseThrow(() -> new IllegalArgumentException("Owner not found"));
+
+        // Todos anhand der IDs laden
+        List<Todo> todos = new ArrayList<>();
+        if (dto.getTodoIds() != null) {
+            todos = todoRepository.findAllById(dto.getTodoIds());
         }
+
+        // Neues Project erstellen
+        Project project = Project.builder()
+                .title(dto.getTitle())
+                .description(dto.getDescription())
+                .owner(owner)
+                .todos(new HashSet<>(todos))
+                .build();
 
         return projectRepository.save(project);
     }

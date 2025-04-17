@@ -1,5 +1,6 @@
 package com.example.to_do_liste.controller;
 
+import com.example.to_do_liste.dto.ProjectDto;
 import com.example.to_do_liste.model.Project;
 import com.example.to_do_liste.repository.ProjectRepository;
 import com.example.to_do_liste.service.ProjectService;
@@ -26,8 +27,8 @@ public class ProjectController {
     }
 
     @PostMapping
-    public Project createProject(@RequestBody Project project) {
-        return projectService.createProject(project);
+    public Project createProject(@RequestBody ProjectDto projectDto) {
+        return projectService.createProject(projectDto);
     }
 
     @DeleteMapping
