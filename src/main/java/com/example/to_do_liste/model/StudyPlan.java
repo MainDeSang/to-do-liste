@@ -3,6 +3,7 @@ package com.example.to_do_liste.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,7 +18,11 @@ public class StudyPlan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String title;
+
+    private String description;
+
+    private Date startDate;
 
     @ManyToMany
     @JoinTable(

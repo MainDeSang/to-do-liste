@@ -2,8 +2,6 @@ package com.example.to_do_liste.service;
 
 import com.example.to_do_liste.model.Person;
 import com.example.to_do_liste.model.Project;
-import com.example.to_do_liste.model.Todo;
-import com.example.to_do_liste.repository.PersonRepository;
 import com.example.to_do_liste.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,32 +12,37 @@ import org.springframework.stereotype.Service;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final PersonRepository personRepository;
 
     public Project createProject(Project project) {
-        // Prüfung ob Title vergeben wurde, andernfalls wird eine Fehlermeldung geworfen
         if (project.getTitle() == null || project.getTitle().isEmpty()) {
             throw new IllegalArgumentException("Project title cannot be empty");
         }
-        project.setTitle(project.getTitle());
-        project.setDescription(project.getDescription());
-        project.setOwner(Person.builder().build());
-        project.setTodos(project.getTodos());
+
+        // Optional: Platzhalter für Owner – hier wäre evtl. ein echter User sinnvoll
+        if (project.getOwner() == null) {
+            project.setOwner(Person.builder().username("Unbekannt").build());
+        }
+
         return projectRepository.save(project);
     }
 
+
     public Project updateProject(Project project) {
-        // Projekt aus der Datenbank abrufen
-        Project updatedProject = projectRepository.findById(project.getId())
-                .orElseThrow(
-                        () -> new RuntimeException("Kein Projekt gefunden"));
+        Project existing = projectRepository.findById(project.getId())
+                .orElseThrow(() -> new RuntimeException("Kein Projekt gefunden"));
 
+        // Nur Felder aktualisieren, die du möchtest
+        existing.setTitle(project.getTitle());
+        existing.setDescription(project.getDescription());
 
-        // Felder aktualisieren
-        project.setTitle(updatedProject.getTitle());
-        project.setDescription(updatedProject.getDescription());
-        project.getTodos().add(new Todo());
-        // Aktualisiertes Projekte speichern
-        return projectRepository.save(updatedProject);
+        // Beispiel: Todo's ersetzen oder hinzufügen
+        if (project.getTodos() != null) {
+            existing.getTodos().clear();
+            existing.getTodos().addAll(project.getTodos());
+        }
+
+        return projectRepository.save(existing);
     }
+
+
 }
