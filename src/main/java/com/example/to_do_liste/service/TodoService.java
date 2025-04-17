@@ -79,6 +79,7 @@ public class TodoService {
                     .orElseThrow(
                             () -> new RuntimeException("Projekt nicht gefunden"));
         }
+
         // Felder aktualisieren
         todo.setTitle(todoDto.title);
         todo.setDescription(todoDto.description);
