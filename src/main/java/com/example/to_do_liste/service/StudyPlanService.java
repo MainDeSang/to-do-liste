@@ -37,6 +37,11 @@ public class StudyPlanService {
         existing.setStartDate(studyPlan.getStartDate());
 
         // Todos hinzufügen oder ersetzen
+        if (studyPlan.getTodos() != null) {
+            existing.getTodos().clear();
+            existing.getTodos().addAll(studyPlan.getTodos());
+        }
 
+        return studyPlanRepository.save(existing);
     }
 }
