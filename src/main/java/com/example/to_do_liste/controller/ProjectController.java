@@ -2,6 +2,7 @@ package com.example.to_do_liste.controller;
 
 import com.example.to_do_liste.model.Project;
 import com.example.to_do_liste.repository.ProjectRepository;
+import com.example.to_do_liste.service.ProjectService;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectRepository projectRepository;
+    private final ProjectService projectService;
 
     @GetMapping
     public List<Project> getAllProjects() {
@@ -25,7 +27,7 @@ public class ProjectController {
 
     @PostMapping
     public Project createProject(@RequestBody Project project) {
-        return projectRepository.save(project);
+        return projectService.createProject(project);
     }
 
     @DeleteMapping
@@ -36,11 +38,7 @@ public class ProjectController {
 
     @PutMapping
     public Project updateProject(@RequestBody Project project) {
-        List<Project> projects = projectRepository.findAll();
-        for (Project p : projects) {
-            if (p.getId().equals(project.getId())) {
-                return projectRepository.save(project);
-            }
-        }
-    return projectRepository.save(project);}
+        return projectService.updateProject(project);
+    }
+
 }
