@@ -2,6 +2,7 @@ package com.example.to_do_liste.controller;
 
 import com.example.to_do_liste.model.StudyPlan;
 import com.example.to_do_liste.repository.StudyPlanRepository;
+import com.example.to_do_liste.service.StudyPlanService;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.List;
 public class StudyPlanController {
 
     private final StudyPlanRepository studyPlanRepository;
+    private final StudyPlanService studyPlanService;
 
     @GetMapping
     public List<StudyPlan> getStudyPlans() {
@@ -25,8 +27,8 @@ public class StudyPlanController {
     }
 
     @PostMapping
-    public ResponseEntity<StudyPlan> addStudyPlan(@RequestBody StudyPlan studyPlan) {
-        return ResponseEntity.ok(studyPlanRepository.save(studyPlan));
+    public StudyPlan createStudyPlan(@RequestBody StudyPlan studyPlan) {
+        return studyPlanService.createStudyPlan(studyPlan);
     }
 
     @DeleteMapping

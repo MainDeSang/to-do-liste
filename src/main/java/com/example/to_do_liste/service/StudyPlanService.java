@@ -1,5 +1,6 @@
 package com.example.to_do_liste.service;
 
+import com.example.to_do_liste.model.Person;
 import com.example.to_do_liste.model.StudyPlan;
 import com.example.to_do_liste.repository.StudyPlanRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,22 @@ public class StudyPlanService {
         } else if (studyPlan.getStartDate() == null) {
             throw new IllegalArgumentException("StudyPlan start date is required");
         }
-        studyPlan.setTitle(studyPlan.getTitle());
+        // Optional: Platzhalter für Owner – hier wäre evtl. ein echter User sinnvoll
+        if (studyPlan.getOwner() == null) {
+            studyPlan.setOwner(Person.builder().username("Unbekannt").build());
+        }
+        return studyPlanRepository.save(studyPlan);
+    }
+
+    public StudyPlan updateStudyPlan(StudyPlan studyPlan) {
+        StudyPlan existing = studyPlanRepository.findById(studyPlan.getId())
+                .orElseThrow(() -> new RuntimeException("Kein Projekt gefunden"));
+
+        existing.setTitle(studyPlan.getTitle());
+        existing.setDescription(studyPlan.getDescription());
+        existing.setStartDate(studyPlan.getStartDate());
+
+        // Todos hinzufügen oder ersetzen
+
     }
 }
