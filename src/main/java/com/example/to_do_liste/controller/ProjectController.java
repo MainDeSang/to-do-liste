@@ -2,8 +2,8 @@ package com.example.to_do_liste.controller;
 
 import com.example.to_do_liste.model.Project;
 import com.example.to_do_liste.repository.ProjectRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +13,7 @@ import java.util.List;
 @RequestMapping("/api/projects")
 @CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
+@Builder
 public class ProjectController {
 
     private final ProjectRepository projectRepository;

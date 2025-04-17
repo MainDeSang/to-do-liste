@@ -1,19 +1,16 @@
 package com.example.to_do_liste.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Builder
-@NoArgsConstructor
+@AllArgsConstructor
 public class StudyPlan {
 
     @Id
